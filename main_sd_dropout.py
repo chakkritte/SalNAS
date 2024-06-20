@@ -4,11 +4,10 @@ import logging
 import os
 import torch
 import torch.nn as nn
-from torch.optim.swa_utils import AveragedModel
 from argparse import ArgumentParser
 import salnas.datasets.data as data
 from salnas.core.eval import validate
-from salnas.core.trainer import train_self_kd
+from salnas.core.trainer import train_self_sd_dropout
 from salnas.models.build_model import build_model, cal_flops_params
 from salnas.utils.utils import OwnLogging
 import salnas.utils.utils as utils
@@ -27,7 +26,7 @@ parser.add_argument("--dataset_dir", type=str, default=config.DATASET_PATH)
 parser.add_argument('--input_size_h',default=384, type=int)
 parser.add_argument('--input_size_w',default=384, type=int)
 parser.add_argument('--no_workers',default=8, type=int)
-parser.add_argument('--no_epochs',default=10, type=int)
+parser.add_argument('--no_epochs',default=20, type=int)
 parser.add_argument('--t_epochs',default=10, type=int)
 parser.add_argument('--log_interval',default=20, type=int)
 parser.add_argument('--lr_sched',default=True, type=bool)
@@ -56,7 +55,7 @@ parser.add_argument('--student',default="eeeac2", type=str)
 parser.add_argument('--readout',default="simple", type=str)
 parser.add_argument('--output_size', default=(480, 640))
 
-parser.add_argument('--kd_mode', type=str, default="self", help='none | pkd | self')
+parser.add_argument('--kd_mode', type=str, default="sd", help='none | pkd | self')
 parser.add_argument('--amp', action='store_true', default=False)
 parser.add_argument('--seed',default=3407, type=int)
 
@@ -73,7 +72,7 @@ csv_log = OwnLogging()
 if not os.path.exists(args.output_dir):
     os.makedirs(args.output_dir)
 
-args.save = '{}/{}-{}-self-{}'.format(args.output_dir, args.dataset, args.student, time.strftime("%Y%m%d-%H%M%S"))
+args.save = '{}/{}-{}-self-sd-{}'.format(args.output_dir, args.dataset, args.student, time.strftime("%Y%m%d-%H%M%S"))
 utils.create_exp_dir(args.save, scripts_to_save=None)
 
 log_format = '%(asctime)s %(message)s'
@@ -124,9 +123,6 @@ params_group = [
     {"params": list(filter(lambda p: p.requires_grad, student.parameters())), "lr" : args.learning_rate*10 },
 ]
 
-if args.kd_mode == "self":
-    swa_model = AveragedModel(model=student, use_buffers=True, device=device)
-
 optimizer = torch.optim.Adam(params_group)
 scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0 = args.t_epochs)
 
@@ -136,7 +132,7 @@ for epoch in range(0, args.no_epochs):
     lr = optimizer.param_groups[0]['lr']
     logging.info(f"Epoch {epoch}: Learning rate : {lr}")
 
-    loss = train_self_kd(student, optimizer, train_loader, epoch, device, args, swa_model, scaler)
+    loss = train_self_sd_dropout(student, optimizer, train_loader, epoch, device, args, scaler)
 
     if args.lr_sched:
         scheduler.step()
@@ -148,8 +144,7 @@ for epoch in range(0, args.no_epochs):
             best_loss = cc_loss
         if best_loss >= cc_loss:
             best_loss = cc_loss
-            if args.kd_mode == "self":
-                swa_model.update_parameters(student)
+            
             logging.info('[{:2d},  save, {}]'.format(epoch, args.model_val_path))
             utils.save_state_dict(student, args)
         print()
