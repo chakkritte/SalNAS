@@ -735,24 +735,6 @@ class EEEAC2(nn.Module):
         out5 = x
         x = self.head(out1, out2, out3, out4, out5)
         return x
-    
-    def forward_sd(self, x):
-        x = self.eeeac2.first_conv(x)
-        out1 = x
-        for i in range(len(self.eeeac2.blocks)):
-            x = self.eeeac2.blocks[i](x)
-            if i == 3:
-                out2 = x
-            elif i == 6:
-                out3 = x
-            elif i == 14:
-                out4 = x
-
-        x = self.eeeac2.final_expand_layer(x)
-        x1 = F.dropout(x, p=0.5, training=True, inplace=False)
-        x2 = F.dropout(x, p=0.5, training=True, inplace=False)
-        out5 = x
-        return self.head(out1, out2, out3, out4, out5), self.head(out1, out2, out3, out4, x1), self.head(out1, out2, out3, out4, x2)
 
 class EEEAC1(nn.Module):
 
@@ -840,23 +822,6 @@ class MobileNetV3(nn.Module):
         out5 = x
         x = self.head(out1, out2, out3, out4, out5)
         return x
-    
-    def forward_sd(self, x):
-        for i in range(len(self.model)):
-            x = self.model[i](x)      
-            if i == 0:
-                out1 = x
-            elif i == 3:
-                out2 = x
-            elif i == 6:
-                out3 = x
-            elif i == 12:
-                out4 = x
-        out5 = x
-        x1 = F.dropout(x, p=0.5, training=True, inplace=False)
-        x2 = F.dropout(x, p=0.5, training=True, inplace=False)
-        return self.head(out1, out2, out3, out4, out5), self.head(out1, out2, out3, out4, x1), self.head(out1, out2, out3, out4, x2)
-    
 
 class EfficientNet(nn.Module):
 
@@ -921,28 +886,6 @@ class EfficientNetB4(nn.Module):
         out5 = x
         x = self.head(out1, out2, out3, out4, out5)
         return x
-
-    def forward_sd(self, x):
-        x = self.model.conv_stem(x)  
-        x = self.model.bn1(x)  
-        # x = self.model.act1(x)  
-        out1 = x
-        for i in range(len(self.model.blocks)):
-            x = self.model.blocks[i](x)            
-            if i == 1:
-                out2 = x
-            elif i == 2:
-                out3 = x
-            elif i == 4:
-                out4 = x
-        x = self.model.conv_head(x)  
-        x = self.model.bn2(x)  
-        # x = self.model.act2(x)  
-        out5 = x
-        x1 = F.dropout(x, p=0.5, training=True, inplace=False)
-        x2 = F.dropout(x, p=0.5, training=True, inplace=False)
-        return self.head(out1, out2, out3, out4, out5), self.head(out1, out2, out3, out4, x1), self.head(out1, out2, out3, out4, x2)
-    
 
 class EfficientNetB7(nn.Module):
 
@@ -1087,60 +1030,6 @@ class tresnet(nn.Module):
         x = x.squeeze(1)
         return x
 
-
-    def custom_head(self, out1, out2, out3, out4, out5):
-        x = torch.cat((out5,out4), 1)
-        #assert x.size() == (batch_size, 2048, 16, 16)
-        x = self.deconv_layer1(x)
-        #assert x.size() == (batch_size, 512, 32, 32)
-        
-        x = torch.cat((x, out3), 1)
-        #assert x.size() == (batch_size, 1024, 32, 32)
-        x = self.deconv_layer2(x)
-        #assert x.size() == (batch_size, 256, 64, 64)
-
-        x = torch.cat((x, out2), 1)
-        #assert x.size() == (batch_size, 512, 64, 64)
-        x = self.deconv_layer3(x)
-        #assert x.size() == (batch_size, 64, 128, 128)
-        x = torch.cat((x, out1), 1)
-        #assert x.size() == (batch_size, 128, 128, 128)
-        x = self.deconv_layer4(x)
-        x = self.deconv_layer5(x)
-        #assert x.size() == (batch_size, 1, 256, 256)
-
-        x = F.interpolate(x, size=self.output_size, mode='bilinear', align_corners=False)
-
-        if not self.training:
-            x = self.blur(x)
-            
-        x = x.squeeze(1)
-        return x
-
-    def forward_sd(self, images):
-        batch_size = images.size(0)
-
-        out1 = self.conv_layer1(images)
-        #print(out1.size())
-        out2 = self.conv_layer2(out1)
-        #print(out2.size())
-        out3 = self.conv_layer3(out2)
-        #print(out3.size())
-        out4 = self.conv_layer4(out3)
-        #print(out4.size())
-        out5 = self.conv_layer5(out4)
-        #print(out5.size())
-
-        out5 = self.deconv_layer0(out5)
-        #assert out5.size() == (batch_size, 1024, 16, 16)
-
-        x1 = F.dropout(out5, p=0.5, training=True, inplace=False)
-        x2 = F.dropout(out5, p=0.5, training=True, inplace=False)
-        return self.custom_head(out1, out2, out3, out4, out5), self.custom_head(out1, out2, out3, out4, x1), self.custom_head(out1, out2, out3, out4, x2)
-
-
-
-
 class MobileNetV3_21k(nn.Module):
 
     def __init__(self, num_channels=3, train_enc=False, load_weight=1, output_size=(480,640), readout="simple"):
@@ -1247,25 +1136,6 @@ class OFA595(nn.Module):
         out5 = x
         x = self.head(out1, out2, out3, out4, out5)
         return x
-
-    def forward_sd(self, x):
-        x = self.model.first_conv(x)
-        out1 = x
-        for i in range(len(self.model.blocks)):
-            x = self.model.blocks[i](x)
-            if i == 3:
-                out2 = x
-            elif i == 7:
-                out3 = x
-            elif i == 15:
-                out4 = x
-
-        x = self.model.final_expand_layer(x)
-        out5 = x
-        x1 = F.dropout(x, p=0.5, training=True, inplace=False)
-        x2 = F.dropout(x, p=0.5, training=True, inplace=False)
-        return self.head(out1, out2, out3, out4, out5), self.head(out1, out2, out3, out4, x1), self.head(out1, out2, out3, out4, x2)
-
 
 class ResNetModel1k(nn.Module):
     def __init__(self, num_channels=3, train_enc=False, load_weight=1, pretrained='1k', output_size=(480,640)):
