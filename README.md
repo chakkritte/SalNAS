@@ -1,5 +1,9 @@
 
-# SalNAS
+# SalNAS: Efficient Saliency-prediction Neural Architecture Search with self-knowledge distillation
+
+This paper has been accepted to Engineering Applications of Artificial Intelligence.
+
+Paper: [Engineering Applications of Artificial Intelligence](https://doi.org/10.1016/j.engappai.2024.109030)
 
 ![](https://img.shields.io/badge/-PyTorch%20Implementation-blue.svg?logo=pytorch)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
@@ -72,6 +76,14 @@ pip install -r requirements.txt --no-cache-dir
 ```
 python train_salnas.py --amp --self_kd --no_epochs 20 --t_epochs 10  --loss_mode new --kldiv --cc --nss --output_dir output-selfkd
 ```
+
+## Citation
+
+If you use SalNAS or any part of this research, please cite our paper:
+```
+coming soon
+```
+
 
 ## License
 
