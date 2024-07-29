@@ -81,8 +81,17 @@ python train_salnas.py --amp --self_kd --no_epochs 20 --t_epochs 10  --loss_mode
 
 If you use SalNAS or any part of this research, please cite our paper:
 ```
-coming soon
-```
+@article{termritthikun2024salnas,
+  title = "{SalNAS: Efficient Saliency-prediction Neural Architecture Search with self-knowledge distillation}",
+  journal = {Engineering Applications of Artificial Intelligence},
+  volume = {136},
+  pages = {109030},
+  year = {2024},
+  issn = {0952-1976},
+  doi = {https://doi.org/10.1016/j.engappai.2024.109030},
+  author = {Chakkrit Termritthikun and Ayaz Umer and Suwichaya Suwanwimolkul and Feng Xia and Ivan Lee},
+}
+``````
 
 
 ## License
