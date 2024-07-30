@@ -1,7 +1,7 @@
 
 # SalNAS: Efficient Saliency-prediction Neural Architecture Search with self-knowledge distillation
 
-This paper has been accepted to Engineering Applications of Artificial Intelligence.
+This paper has been published to Engineering Applications of Artificial Intelligence.
 
 Paper: [EAAI version](https://doi.org/10.1016/j.engappai.2024.109030) or [arXiv version](https://arxiv.org/pdf/2407.20062)
 
