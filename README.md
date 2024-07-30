@@ -3,7 +3,7 @@
 
 This paper has been accepted to Engineering Applications of Artificial Intelligence.
 
-Paper: [Engineering Applications of Artificial Intelligence](https://doi.org/10.1016/j.engappai.2024.109030)
+Paper: [EAAI version](https://doi.org/10.1016/j.engappai.2024.109030) or [arXiv version](https://arxiv.org/pdf/2407.20062)
 
 ![](https://img.shields.io/badge/-PyTorch%20Implementation-blue.svg?logo=pytorch)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
