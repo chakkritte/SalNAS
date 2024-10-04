@@ -25,7 +25,7 @@ This repository contains the source code for SalNAS, which accompanies the resea
 
 ```
 git clone https://github.com/chakkritte/SalNAS/
-cd PKD
+cd SalNAS
 mkdir data
 ```
 
