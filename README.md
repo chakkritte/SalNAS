@@ -5,6 +5,8 @@ This paper has been published to Engineering Applications of Artificial Intellig
 
 Paper: [EAAI version](https://doi.org/10.1016/j.engappai.2024.109030) or [arXiv version](https://arxiv.org/pdf/2407.20062)
 
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/salnas-efficient-saliency-prediction-neural/saliency-prediction-on-salicon)](https://paperswithcode.com/sota/saliency-prediction-on-salicon?p=salnas-efficient-saliency-prediction-neural)
+
 ![](https://img.shields.io/badge/-PyTorch%20Implementation-blue.svg?logo=pytorch)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
