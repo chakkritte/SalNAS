@@ -34,7 +34,7 @@ mkdir data
 ## The dataset folder structure:
 
 ```
-PKD
+SalNAS
 |__ data
     |_ salicon
       |_ fixations
