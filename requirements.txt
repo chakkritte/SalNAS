@@ -5,7 +5,7 @@ opencv-python==4.9.0.80
 ptflops==0.7.2.2
 h5py==3.10.0
 scikit-image==0.22.0
-requests==2.32.4
+requests==2.33.0
 matplotlib==3.8.3
 gdown==5.1.0
 PyYAML==6.0.1
